@@ -1,14 +1,14 @@
 import { Route } from '@angular/router';
-import { Login } from '../login/login';
-import { NavBar } from '../navbar/navbar';
+import { LoginComponent } from '../login/login.component';
+import { NavBarComponent } from '../navbar/navbar.component';
 
 export const appRoutes: Route[] = [
     {
         path: '',
-        component: Login
+        component: LoginComponent
     },
     {
         path: 'dashboard',
-        component: NavBar
+        component: NavBarComponent
     }
 ];
