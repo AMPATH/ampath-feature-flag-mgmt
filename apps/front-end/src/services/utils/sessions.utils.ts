@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core"
+import { SessionT } from "./sessions.utils.types";
 
 @Injectable({ providedIn: 'root' })
 export class SessionUtils {
@@ -26,11 +27,4 @@ export class SessionUtils {
     public clearSession() {
         sessionStorage.clear();
     }
-}
-
-interface SessionT {
-    uuid: string;
-    username: string;
-    role_name: string;
-    person_name: string;
 }
