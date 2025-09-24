@@ -1,0 +1,41 @@
+.layout-container {
+  height: 100vh;
+}
+
+mat-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.content {
+  padding: 16px;
+}
+
+.hide-on-large {
+  display: none;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+@media (max-width: 2000px) {
+  mat-sidenav {
+    width: 200px;
+  }
+
+  .hide-on-large {
+    display: inline-flex;
+  }
+}
+
+// @media (max-width: 768px) {
+//   mat-sidenav {
+//     width: 200px;
+//   }
+
+//   .hide-on-large {
+//     display: inline-flex;
+//   }
+// }

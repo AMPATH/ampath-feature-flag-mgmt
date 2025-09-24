@@ -48,7 +48,7 @@ export class LoginComponent {
                     };
 
                     this.sessionUtils.setSession(body);
-                    this.router.navigate(["/dashboard"])
+                    this.router.navigate(["/home"])
                 },
                 error: () => {
                     this.loginError = "An error occurred during login.";
