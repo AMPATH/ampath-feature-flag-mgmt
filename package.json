@@ -2,7 +2,9 @@
   "name": "@ampath-feature-flag-mgmt/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start": "npx nx serve back-end"
+  },
   "private": true,
   "dependencies": {
     "@angular/common": "~20.2.0",
@@ -51,6 +53,7 @@
     "@swc-node/register": "~1.9.1",
     "@swc/core": "~1.5.7",
     "@swc/helpers": "~0.5.11",
+    "@types/jest": "^30.0.0",
     "@types/node": "20.19.9",
     "@typescript-eslint/utils": "^8.40.0",
     "angular-eslint": "^20.2.0",

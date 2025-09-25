@@ -4,6 +4,10 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import { DatabaseModule } from './core/database/db.module';
+import { FeatureFlagModule } from './feature-flag/feature-flag.module';
+import { RulesModule } from './rules/rules.module';
+import { OperatorsModule } from './operators/operators.module';
+import { AttributesModule } from './attributes/attributes.module';
 
 @Module({
   imports: [
@@ -19,6 +23,10 @@ import { DatabaseModule } from './core/database/db.module';
       }),
     }),
     DatabaseModule,
+    FeatureFlagModule,
+    RulesModule,
+    AttributesModule,
+    OperatorsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
