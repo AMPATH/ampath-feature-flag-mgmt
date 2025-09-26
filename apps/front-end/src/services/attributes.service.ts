@@ -1,0 +1,32 @@
+import { Injectable } from "@angular/core";
+import { BaseService } from "./base.service";
+import { AttributeTypes } from "../attributes/attributes.types";
+
+@Injectable({ providedIn: 'root' })
+export class AttributesService extends BaseService {
+    private endPoint = "/attributes";
+
+    private getEndpoint(endPoint: string = this.endPoint) {
+        return this.getUrl("FEATURE_FLAG") + endPoint;
+    }
+
+    public fetch() {
+        const url = this.getEndpoint();
+        return this.http.get<AttributeTypes[]>(url);
+    }
+
+    public create() {
+        const url = this.getEndpoint();
+        return this.http.post(url, {});
+    }
+
+    public update() {
+        const url = this.getEndpoint();
+        return this.http.put(url, {});
+    }
+
+    public delete() {
+         const url = this.getEndpoint();
+        return this.http.delete(url, {});
+    }
+}

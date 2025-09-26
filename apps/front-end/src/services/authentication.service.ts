@@ -1,28 +1,19 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
-import { ServiceUtils } from "./utils/service.utils";
-import { inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
+import { BaseService } from "./base.service";
 
 @Injectable({ providedIn: 'root' })
-export class AuthenticationService {
-    private serviceUtils = inject(ServiceUtils);
-    private http = inject(HttpClient);
-
+export class AuthenticationService extends BaseService {
     public authenticate(username: string, password: string) {
-        let headers = new HttpHeaders();
-
+        let headers = this.getHttpHeaders();
         const base64 = btoa(username + ':' + password);
         headers = headers.append('Authorization', 'Basic ' + base64);
 
-        const url = this.getUrl();
+        const url = this.getUrl("AMRS");
         return this.http.get(url, { headers: headers });
     }
 
-    public getUrl(): string {
-        return this.serviceUtils.getAMRSUrl();
-    }
-
     public deleteSession() {
-        const url = this.getUrl();
+        const url = this.getUrl("AMRS");
         return this.http.delete(url, {});
     }
 }

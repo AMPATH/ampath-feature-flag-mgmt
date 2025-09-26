@@ -7,25 +7,25 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @Component({
     selector: 'app-table',
     styleUrl: 'table.component.scss',
     templateUrl: 'table.component.html',
-    imports: [MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, CommonModule, MatIconModule, MatButtonModule],
+    imports: [MatTableModule, MatPaginatorModule, MatFormFieldModule, MatInputModule, CommonModule, MatIconModule, MatButtonModule, MatProgressBarModule],
 })
 export class TableComponent implements OnInit, AfterViewInit {
+    @Input() busy = false;
     @Input() columns: Columns[] = [];
-    @Input() dataset: Array<object> = [];
     displayedColumns: string[] = [];
-    dataSource = new MatTableDataSource<object>();
+    @Input() dataSource = new MatTableDataSource<object>();
 
     @ViewChild(MatPaginator) paginator: MatPaginator = new MatPaginator();
 
     ngOnInit(): void {
         this.displayedColumns = this.columns.map(v => v.property);
-        this.displayedColumns.push('action'); 
-        this.dataSource = new MatTableDataSource(this.dataset);
+        this.displayedColumns.push('action');
     }
 
     ngAfterViewInit() {
