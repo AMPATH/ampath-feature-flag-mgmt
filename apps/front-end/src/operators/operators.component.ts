@@ -1,9 +1,11 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { TableComponent } from "../shared/table.component";
 import { Columns } from "../shared/table.component.types";
 import { OperatorsService } from "../services/operators.service";
 import { MatTableDataSource } from "@angular/material/table";
-import { Subject, takeUntil } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { SnackBarUtil } from "../shared/snackbar/snackbar.util";
+import { catchError, finalize } from "rxjs";
 
 @Component({
     imports: [TableComponent],
@@ -13,7 +15,8 @@ import { Subject, takeUntil } from "rxjs";
 
 export class OperatorsComponent implements OnInit {
     private operatorsService = inject(OperatorsService);
-    private destroy$ = new Subject<void>();
+    private snackBar = inject(SnackBarUtil);
+    private destroyRef = inject(DestroyRef);
     public busy = false;
 
     columns: Columns[] = [
@@ -32,16 +35,17 @@ export class OperatorsComponent implements OnInit {
     ngOnInit() {
         this.busy = true;
         this.operatorsService.fetch()
-            .pipe(takeUntil(this.destroy$))
+            .pipe(takeUntilDestroyed(this.destroyRef),
+                catchError((error) => { throw error }),
+                finalize(() => {
+                    this.busy = false;
+                }))
             .subscribe({
                 next: (response) => {
                     this.dataSource.data = response;
                 },
                 error: (error) => {
-                    console.log(error);
-                },
-                complete: () => {
-                    this.busy = false;
+                    this.snackBar.open(`An error occurred while loading operators: ${error.statusText}`, "error")
                 }
             });
     }

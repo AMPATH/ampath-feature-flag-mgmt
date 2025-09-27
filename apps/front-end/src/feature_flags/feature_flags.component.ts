@@ -1,9 +1,12 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit } from "@angular/core";
 import { TableComponent } from "../shared/table.component";
 import { Columns } from "../shared/table.component.types";
 import { FeatureFlagsService } from "../services/feature_flag.service";
-import { Subject, takeUntil } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatTableDataSource } from "@angular/material/table";
+import { catchError, finalize } from "rxjs";
+import { SnackBarUtil } from "../shared/snackbar/snackbar.util";
+import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
     imports: [TableComponent],
@@ -13,7 +16,8 @@ import { MatTableDataSource } from "@angular/material/table";
 
 export class FeatureFlagsComponent implements OnInit {
     private featureFlagsService = inject(FeatureFlagsService);
-    private destroy$ = new Subject<void>();
+    private snackBar = inject(SnackBarUtil);
+    private destroyRef = inject(DestroyRef);
     public busy = false;
 
     columns: Columns[] = [
@@ -44,16 +48,19 @@ export class FeatureFlagsComponent implements OnInit {
     ngOnInit() {
         this.busy = true;
         this.featureFlagsService.fetch()
-            .pipe(takeUntil(this.destroy$))
+            .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                catchError((error) => { throw error }),
+                finalize(() => {
+                    this.busy = false;
+                }),
+            )
             .subscribe({
                 next: (response) => {
                     this.dataSource.data = response;
                 },
-                error: (error) => {
-                    console.log(error);
-                },
-                complete: () => {
-                    this.busy = false;
+                error: (error: HttpErrorResponse) => {
+                    this.snackBar.open(`An error occurred while loading feature flags: ${error.statusText}`, "error")
                 }
             });
     }

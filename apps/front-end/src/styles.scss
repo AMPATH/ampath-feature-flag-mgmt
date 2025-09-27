@@ -2,3 +2,15 @@
 @use "bootstrap/scss/bootstrap.scss";
 @use "bootstrap-icons/font/bootstrap-icons.css";
 @use "@angular/material/prebuilt-themes/azure-blue.css";
+@use '@angular/material' as mat;
+
+// Customize the entire app. Change :root to your selector if you want to scope the styles.
+.mode-success {
+    @include mat.snack-bar-overrides((container-color: lime,
+        ));
+}
+
+.mode-error {
+    @include mat.snack-bar-overrides((container-color: tomato,
+        ));
+}
