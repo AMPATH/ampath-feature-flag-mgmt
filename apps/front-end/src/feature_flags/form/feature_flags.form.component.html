@@ -1,0 +1,22 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+    <form class="app-form" (submit)="onFormSubmit()">
+        <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput [(ngModel)]="name" name="name" required />
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <input matInput [(ngModel)]="description" name="description" />
+        </mat-form-field>
+        <p><mat-slide-toggle [(ngModel)]="status" (change)="onStatusChange($event)" name="status">Status</mat-slide-toggle></p>
+         <p *ngIf="isUpdate"><mat-slide-toggle [(ngModel)]="retired" (change)="onRetiredChange($event)" name="retired">Retired</mat-slide-toggle></p>
+        <div class="form-btn">        
+            <button type="submit" matButton="filled">{{ btnTxt }}</button>
+        </div>
+    </form>
+    <!-- <ng-container *ngIf="busy"> <mat-spinner></mat-spinner></ng-container> -->
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button matButton mat-dialog-close>Close</button>
+</mat-dialog-actions>

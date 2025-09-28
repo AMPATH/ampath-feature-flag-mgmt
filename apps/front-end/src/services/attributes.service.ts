@@ -5,6 +5,7 @@ import { AttributeTypes } from "../attributes/attributes.types";
 @Injectable({ providedIn: 'root' })
 export class AttributesService extends BaseService {
     private endPoint = "/attributes";
+    private session = this.sessionUtils.getSession();
 
     private getEndpoint(endPoint: string = this.endPoint) {
         return this.getUrl("FEATURE_FLAG") + endPoint;
@@ -15,18 +16,25 @@ export class AttributesService extends BaseService {
         return this.http.get<AttributeTypes[]>(url);
     }
 
-    public create() {
+    public create(name: string, description: string) {
         const url = this.getEndpoint();
-        return this.http.post(url, {});
+        return this.http.post(url, {
+            name,
+            description,
+            createdBy: this.session.username
+        });
     }
 
-    public update() {
-        const url = this.getEndpoint();
-        return this.http.put(url, {});
+    public update(id: number, name: string, description: string) {
+        const url = this.getEndpoint() + "/" + id;
+        return this.http.put(url, {
+            name,
+            description
+        });
     }
 
     public delete() {
-         const url = this.getEndpoint();
+        const url = this.getEndpoint();
         return this.http.delete(url, {});
     }
 }

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { Columns } from './table.component.types';
@@ -20,6 +20,9 @@ export class TableComponent implements OnInit, AfterViewInit {
     @Input() columns: Columns[] = [];
     displayedColumns: string[] = [];
     @Input() dataSource = new MatTableDataSource<object>();
+     @Input() showRulesButton = false;
+    @Output() addBtnClicked = new EventEmitter();
+    @Output() editBtnClicked = new EventEmitter();
 
     @ViewChild(MatPaginator) paginator: MatPaginator = new MatPaginator();
 
@@ -39,5 +42,13 @@ export class TableComponent implements OnInit, AfterViewInit {
         if (this.dataSource.paginator) {
             this.dataSource.paginator.firstPage();
         }
+    }
+
+    onClickAddBtn() {
+        this.addBtnClicked.emit();
+    }
+
+    onClickEditBtn(event: any) {
+        this.editBtnClicked.emit(event);
     }
 }

@@ -1,0 +1,26 @@
+table {
+  width: 80%;
+}
+
+.table-filter-panel {
+  display: flex;
+  justify-content: space-between;
+}
+
+.table-filter-panel .table-filter {
+  width: 14%;
+}
+
+.table-filter-panel button {
+  margin: 10px;
+}
+
+th {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+td,
+th {
+  width: 18%;
+}

@@ -1,3 +1,5 @@
+import { AppFormDialogTypes } from "../shared/types/app.types";
+
 interface FeatureFlagTypes {
     id: number;
     name: string;
@@ -12,4 +14,24 @@ interface FeatureFlagTypes {
     retiredDate: string;
 }
 
-export type { FeatureFlagTypes }
+type FeatureFlagDefaultTypes = FeatureFlagTypes & AppFormDialogTypes;
+
+const FeatureFlagDefaultValues: FeatureFlagDefaultTypes = {
+    id: 0,
+    name: "",
+    description: "",
+    status: false,
+    createdBy: "",
+    createdAt: "",
+    updatedBy: "",
+    updatedAt: "",
+    retired: false,
+    retiredBy: "",
+    retiredDate: "",
+    isUpdate: false,
+    title: "New feature flag",
+    btnText: "Save"
+}
+
+export type { FeatureFlagTypes, FeatureFlagDefaultTypes }
+export { FeatureFlagDefaultValues }

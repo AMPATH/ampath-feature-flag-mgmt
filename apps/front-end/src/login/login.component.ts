@@ -4,7 +4,7 @@ import { AuthenticationService } from "../services/authentication.service";
 import { CommonModule } from "@angular/common";
 import { SessionUtils } from "../services/utils/sessions.utils";
 import { Router } from "@angular/router";
-import { Subject, takeUntil, tap } from "rxjs";
+import { Subject, takeUntil } from "rxjs";
 
 @Component({
     imports: [FormsModule, CommonModule],

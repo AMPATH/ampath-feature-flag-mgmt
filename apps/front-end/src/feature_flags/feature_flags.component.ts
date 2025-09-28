@@ -1,12 +1,14 @@
 import { Component, DestroyRef, inject, OnInit } from "@angular/core";
-import { TableComponent } from "../shared/table.component";
-import { Columns } from "../shared/table.component.types";
+import { TableComponent } from "../shared/table/table.component";
+import { Columns } from "../shared/table/table.component.types";
 import { FeatureFlagsService } from "../services/feature_flag.service";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { MatTableDataSource } from "@angular/material/table";
-import { catchError, finalize } from "rxjs";
+import { catchError, finalize, tap } from "rxjs";
 import { SnackBarUtil } from "../shared/snackbar/snackbar.util";
-import { HttpErrorResponse } from "@angular/common/http";
+import { MatDialog } from "@angular/material/dialog";
+import { FeatureFlagFormComponent } from "./form/feature_flags.form.component";
+import { FeatureFlagDefaultValues } from "./feature_flags.types";
 
 @Component({
     imports: [TableComponent],
@@ -18,7 +20,8 @@ export class FeatureFlagsComponent implements OnInit {
     private featureFlagsService = inject(FeatureFlagsService);
     private snackBar = inject(SnackBarUtil);
     private destroyRef = inject(DestroyRef);
-    public busy = false;
+    private dialog = inject(MatDialog);
+    busy = false;
 
     columns: Columns[] = [
         {
@@ -26,7 +29,7 @@ export class FeatureFlagsComponent implements OnInit {
             property: "name"
         },
         {
-            name: "Name",
+            name: "Description",
             property: "description"
         },
         {
@@ -46,22 +49,60 @@ export class FeatureFlagsComponent implements OnInit {
     dataSource = new MatTableDataSource<object>();
 
     ngOnInit() {
+        this.fetchData();
+    }
+
+    fetchData() {
         this.busy = true;
         this.featureFlagsService.fetch()
             .pipe(
                 takeUntilDestroyed(this.destroyRef),
-                catchError((error) => { throw error }),
+                tap((res) => {
+                    this.dataSource.data = res;
+                }),
+                catchError((error) => {
+                    this.snackBar.open(`An error occurred while loading feature flags: ${error.statusText}`, "error");
+                    throw error;
+                }),
                 finalize(() => {
                     this.busy = false;
                 }),
             )
-            .subscribe({
-                next: (response) => {
-                    this.dataSource.data = response;
-                },
-                error: (error: HttpErrorResponse) => {
-                    this.snackBar.open(`An error occurred while loading feature flags: ${error.statusText}`, "error")
+            .subscribe();
+    }
+
+    addBtnClicked() {
+        this.dialog.open(FeatureFlagFormComponent, {
+            data: FeatureFlagDefaultValues,
+            width: "800px",
+            height: "auto"
+        }).afterClosed().pipe(
+            takeUntilDestroyed(this.destroyRef),
+            tap(result => {
+                if (result) {
+                    this.dataSource.data = [...this.dataSource.data, result];
                 }
-            });
+            })
+        ).subscribe();
+    }
+
+    editBtnClicked(event: object) {
+        this.dialog.open(FeatureFlagFormComponent, {
+            data: {
+                ...event,
+                isUpdate: true,
+                title: `Edit feature flag`,
+                btnText: "Update"
+            },
+            width: "800px",
+            height: "auto"
+        }).afterClosed().pipe(
+            takeUntilDestroyed(this.destroyRef),
+            tap(result => {
+                if (result) {
+                    this.dataSource.data = [...this.dataSource.data, result];
+                }
+            })
+        ).subscribe();
     }
 }

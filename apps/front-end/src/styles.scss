@@ -6,11 +6,26 @@
 
 // Customize the entire app. Change :root to your selector if you want to scope the styles.
 .mode-success {
-    @include mat.snack-bar-overrides((container-color: lime,
+    @include mat.snack-bar-overrides((container-color: green,
         ));
 }
 
 .mode-error {
     @include mat.snack-bar-overrides((container-color: tomato,
         ));
+}
+
+.app-form {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.app-form .form-btn {
+    display: flex;
+    justify-content: center;
+}
+
+.app-form .form-btn button {
+    width: 50%;
 }
