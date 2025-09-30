@@ -1,13 +1,12 @@
-import { Component, ChangeDetectionStrategy, inject, DestroyRef, OnInit } from "@angular/core";
+import { Component, ChangeDetectionStrategy, inject, OnInit } from "@angular/core";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleChange, MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { FormsModule } from "@angular/forms";
+import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { FeatureFlagsService } from "../../services/feature_flag.service";
-import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { catchError, finalize, tap } from "rxjs";
 import { SnackBarUtil } from "../../shared/snackbar/snackbar.util";
 import { CommonModule } from "@angular/common";
@@ -16,14 +15,13 @@ import { FeatureFlagDefaultTypes } from "../feature_flags.types";
 @Component({
     selector: 'app-feature-flag-form',
     templateUrl: 'feature_flags.form.component.html',
-    imports: [CommonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, MatFormFieldModule, MatInputModule, MatSlideToggleModule, FormsModule, MatProgressSpinnerModule],
+    imports: [CommonModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButtonModule, MatFormFieldModule, MatInputModule, MatSlideToggleModule, FormsModule, ReactiveFormsModule, MatProgressSpinnerModule],
     changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FeatureFlagFormComponent implements OnInit {
     private data = inject<FeatureFlagDefaultTypes>(MAT_DIALOG_DATA);
     private dialogRef = inject(MatDialogRef<FeatureFlagFormComponent>);
     private featureFlagsService = inject(FeatureFlagsService);
-    private destroyRef = inject(DestroyRef);
     private snackBar = inject(SnackBarUtil);
 
     busy = false;
@@ -53,6 +51,13 @@ export class FeatureFlagFormComponent implements OnInit {
         this.retired = event.checked;
     }
 
+    pageForm = new FormGroup({
+        name: new FormControl(this.name, [Validators.required]),
+        description: new FormControl(this.description, [Validators.required]),
+        status: new FormControl(this.status),
+        retired: new FormControl(this.retired),
+    });
+
     onFormSubmit() {
         if (this.isUpdate) {
             this.update();
@@ -65,7 +70,6 @@ export class FeatureFlagFormComponent implements OnInit {
         this.busy = true;
         this.featureFlagsService.create(this.name, this.description, this.status)
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
                 tap((res) => {
                     this.snackBar.open(`Feature flag created successfully`, "success");
                     this.dialogRef.close(res);
@@ -86,7 +90,6 @@ export class FeatureFlagFormComponent implements OnInit {
         this.busy = true;
         this.featureFlagsService.update(this.data.id, this.description, this.status, this.retired)
             .pipe(
-                takeUntilDestroyed(this.destroyRef),
                 tap((res) => {
                     this.snackBar.open(`Feature flag updated successfully`, "success");
                     this.dialogRef.close(res);
@@ -101,6 +104,5 @@ export class FeatureFlagFormComponent implements OnInit {
                 }),
             )
             .subscribe();
-
     }
 }

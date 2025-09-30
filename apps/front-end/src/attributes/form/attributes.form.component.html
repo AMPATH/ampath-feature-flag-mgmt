@@ -1,16 +1,18 @@
 <h2 mat-dialog-title>{{ title }}</h2>
 <mat-dialog-content>
-    <form class="app-form" (submit)="onFormSubmit()">
+    <form class="app-form" [formGroup]="pageForm" (submit)="onFormSubmit()">
         <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
-            <input matInput [(ngModel)]="name" name="name" required />
+            <input matInput [(ngModel)]="name" name="name" formControlName="name" />
+            <mat-error *ngIf="pageForm.value.name">Name is required</mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="description" name="description" />
+            <input matInput [(ngModel)]="description" name="description" formControlName="description" />
+            <mat-error *ngIf="pageForm.value.description">Description is required</mat-error>
         </mat-form-field>
         <div class="form-btn">        
-            <button type="submit" matButton="filled">{{ btnTxt }}</button>
+            <button type="submit" [disabled]="!pageForm.valid" matButton="filled">{{ btnTxt }}</button>
         </div>
     </form>
     <!-- <ng-container *ngIf="busy"> <mat-spinner></mat-spinner></ng-container> -->

@@ -1,18 +1,20 @@
 <h2 mat-dialog-title>{{ title }}</h2>
 <mat-dialog-content>
-    <form class="app-form" (submit)="onFormSubmit()">
+    <form class="app-form" [formGroup]="pageForm"  (submit)="onFormSubmit()">
         <mat-form-field appearance="outline">
             <mat-label>Name</mat-label>
-            <input matInput [(ngModel)]="name" name="name" required />
+            <input matInput [(ngModel)]="name" name="name" formControlName="name" required />
+            <mat-error *ngIf="pageForm.value.name">Name is required</mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
-            <input matInput [(ngModel)]="description" name="description" />
+            <input matInput [(ngModel)]="description" name="description" formControlName="description"/>
+            <mat-error *ngIf="pageForm.value.description">Description is required</mat-error>
         </mat-form-field>
-        <p><mat-slide-toggle [(ngModel)]="status" (change)="onStatusChange($event)" name="status">Status</mat-slide-toggle></p>
-         <p *ngIf="isUpdate"><mat-slide-toggle [(ngModel)]="retired" (change)="onRetiredChange($event)" name="retired">Retired</mat-slide-toggle></p>
+        <p><mat-slide-toggle [(ngModel)]="status" (change)="onStatusChange($event)" name="status" formControlName="status">Status</mat-slide-toggle></p>
+         <p *ngIf="isUpdate"><mat-slide-toggle [(ngModel)]="retired" (change)="onRetiredChange($event)" name="retired" formControlName="retired">Retired</mat-slide-toggle></p>
         <div class="form-btn">        
-            <button type="submit" matButton="filled">{{ btnTxt }}</button>
+            <button type="submit" [disabled]="!pageForm.valid" matButton="filled">{{ btnTxt }}</button>
         </div>
     </form>
     <!-- <ng-container *ngIf="busy"> <mat-spinner></mat-spinner></ng-container> -->
