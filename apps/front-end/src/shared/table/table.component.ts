@@ -23,6 +23,7 @@ export class TableComponent implements OnInit, AfterViewInit {
      @Input() showRulesButton = false;
     @Output() addBtnClicked = new EventEmitter();
     @Output() editBtnClicked = new EventEmitter();
+    @Output() rulesBtnClicked = new EventEmitter();
 
     @ViewChild(MatPaginator) paginator: MatPaginator = new MatPaginator();
 
@@ -50,5 +51,9 @@ export class TableComponent implements OnInit, AfterViewInit {
 
     onClickEditBtn(event: any) {
         this.editBtnClicked.emit(event);
+    }
+
+    onClickRulesBtn(event: any) {
+        this.rulesBtnClicked.emit(event);
     }
 }

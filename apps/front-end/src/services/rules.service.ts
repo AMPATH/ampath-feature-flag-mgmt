@@ -1,5 +1,6 @@
 import { Injectable } from "@angular/core";
 import { BaseService } from "./base.service";
+import { RuleTypes } from "../rules/rules.types";
 
 @Injectable({ providedIn: 'root' })
 export class RulesService extends BaseService {
@@ -11,21 +12,32 @@ export class RulesService extends BaseService {
 
     public fetch() {
         const url = this.getEndpoint();
-        return this.http.get(url);
+        return this.http.get<RuleTypes[]>(url);
     }
 
-    public create() {
+    public create(featureFlagId: number, attributeId: number, operatorId: number, value: string) {
         const url = this.getEndpoint();
-        return this.http.post(url, {});
+        return this.http.post(url, {
+            featureFlagId,
+            attributeId,
+            operatorId,
+            value
+        });
     }
 
-    public update() {
+    public update(id: number, featureFlagId: number, attributeId: number, operatorId: number, value: string) {
         const url = this.getEndpoint();
-        return this.http.put(url, {});
+        return this.http.put(url, {
+            id,
+            featureFlagId,
+            attributeId,
+            operatorId,
+            value
+        });
     }
 
-    public delete() {
-         const url = this.getEndpoint();
-        return this.http.delete(url, {});
+    public delete(id: number) {
+        const url = this.getEndpoint() + "/" + id;
+        return this.http.delete(url, { responseType: "text" });
     }
 }

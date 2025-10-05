@@ -1,0 +1,26 @@
+<h2 mat-dialog-title>{{ title }}</h2>
+<mat-dialog-content>
+    <form class="app-form" [formGroup]="pageForm" (submit)="onFormSubmit()">
+        <mat-form-field appearance="outline">
+            <mat-label>Value</mat-label>
+            <input matInput [(ngModel)]="value" name="value" formControlName="value" required />
+            <mat-error *ngIf="pageForm.value.value">value is required</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+            <mat-label>Attributes</mat-label>
+            <mat-select [(ngModel)]="attributeIds" name="attributeIds" formControlName="attributeIds" multiple required>
+                @for (attribute of attributes; track attribute) {
+                <mat-option [value]="attribute.id">{{attribute.description}}</mat-option>
+                }
+            </mat-select>
+        </mat-form-field>
+
+        <div class="form-btn">
+            <button type="submit" [disabled]="!pageForm.valid" matButton="filled">{{ btnTxt }}</button>
+        </div>
+    </form>
+    <!-- <ng-container *ngIf="busy"> <mat-spinner></mat-spinner></ng-container> -->
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button matButton mat-dialog-close>Close</button>
+</mat-dialog-actions>

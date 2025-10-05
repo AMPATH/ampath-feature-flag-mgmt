@@ -9,6 +9,7 @@ import { SnackBarUtil } from "../shared/snackbar/snackbar.util";
 import { MatDialog } from "@angular/material/dialog";
 import { FeatureFlagFormComponent } from "./form/feature_flags.form.component";
 import { FeatureFlagDefaultValues } from "./feature_flags.types";
+import { Router } from "@angular/router";
 
 @Component({
     imports: [TableComponent],
@@ -21,6 +22,7 @@ export class FeatureFlagsComponent implements OnInit {
     private snackBar = inject(SnackBarUtil);
     private destroyRef = inject(DestroyRef);
     private dialog = inject(MatDialog);
+    private router = inject(Router);
     busy = false;
 
     columns: Columns[] = [
@@ -100,9 +102,19 @@ export class FeatureFlagsComponent implements OnInit {
             takeUntilDestroyed(this.destroyRef),
             tap(result => {
                 if (result) {
-                    this.dataSource.data = [...this.dataSource.data, result];
+                    this.dataSource.data = this.dataSource.data.map((v: any) => {
+                        if(v.id === result.id) {
+                            v = result;
+                        }
+                        return v;
+                    });
                 }
             })
         ).subscribe();
+    }
+
+    rulesBtnClicked(event: any) {
+        const {id, name, description} = event;
+        this.router.navigate(["home", "feature-flags", id, "rules", name, description ]);
     }
 }

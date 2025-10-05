@@ -32,6 +32,7 @@ export class FeatureFlagsService extends BaseService {
     public update(id: number, description: string, status: boolean, retired: boolean) {
         const url = this.getEndpoint() + "/" + id;
         return this.http.put(url, {
+            id,
             description,
             status,
             retired,

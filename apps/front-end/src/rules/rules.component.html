@@ -1,0 +1,26 @@
+<div class="page-content">
+     <h3>{{ featureName }}</h3>
+     <p>{{ featureDescription }}</p>
+</div>
+<div *ngFor="let operator of operators;">
+     <mat-form-field class="app-chip-list" appearance="outline">
+          <mat-label>{{`${operator.name}`}}</mat-label>
+          <mat-chip-grid #chipGrid aria-label="Enter attributes">
+               <mat-chip-row (click)="add(operator.id)">
+                    <button matChipEdit [attr.aria-label]="add">
+                         <mat-icon>add</mat-icon>
+                    </button>
+                    Add rule
+               </mat-chip-row>
+               @for (rule of filterOperatorRules(operator.id); track rule) {
+               <mat-chip-row (removed)="remove(rule)" [editable]="false">
+                    {{rule.attribute.name}}
+                    <button matChipRemove [attr.aria-label]="'remove ' + rule.attribute.name">
+                         <mat-icon>cancel</mat-icon>
+                    </button>
+               </mat-chip-row>
+               }
+               <input [matChipInputFor]="chipGrid" [disabled]="true">
+          </mat-chip-grid>
+     </mat-form-field>
+</div>

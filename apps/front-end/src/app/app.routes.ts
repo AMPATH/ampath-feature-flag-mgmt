@@ -4,6 +4,7 @@ import { NavBarComponent } from '../navbar/navbar.component';
 import { FeatureFlagsComponent } from '../feature_flags/feature_flags.component';
 import { OperatorsComponent } from '../operators/operators.component';
 import { AttributesComponent } from '../attributes/attributes.component';
+import { RulesComponent } from '../rules/rules.component';
 
 export const appRoutes: Route[] = [
     {
@@ -16,7 +17,7 @@ export const appRoutes: Route[] = [
         children: [
             {
                 path: 'feature-flags',
-                component: FeatureFlagsComponent
+                component: FeatureFlagsComponent,
             },
             {
                 path: 'operators',
@@ -26,6 +27,10 @@ export const appRoutes: Route[] = [
                 path: 'attributes',
                 component: AttributesComponent
             },
+            {
+                path: 'feature-flags/:id/rules/:name/:description',
+                component: RulesComponent
+            }
         ]
     }
 ];

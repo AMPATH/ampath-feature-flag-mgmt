@@ -28,6 +28,7 @@ export class OperatorsService extends BaseService {
     public update(id: number, name: string, description: string) {
         const url = this.getEndpoint() + "/" + id;
         return this.http.put(url, {
+            id,
             name,
             description
         });

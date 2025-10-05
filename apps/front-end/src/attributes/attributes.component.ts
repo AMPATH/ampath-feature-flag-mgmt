@@ -88,7 +88,12 @@ export class AttributesComponent implements OnInit {
             takeUntilDestroyed(this.destroyRef),
             tap(result => {
                 if (result) {
-                    this.dataSource.data = [...this.dataSource.data, result];
+                    this.dataSource.data = this.dataSource.data.map((v: any) => {
+                        if(v.id === result.id) {
+                            v = result;
+                        }
+                        return v;
+                    });
                 }
             })
         ).subscribe();
