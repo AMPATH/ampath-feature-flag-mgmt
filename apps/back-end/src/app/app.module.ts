@@ -25,7 +25,7 @@ import { HttpModule } from '@nestjs/axios';
         DATABASE_NAME: Joi.string().required(),
         SYNCHRONIZE_DATABASE: Joi.boolean().required(),
         JWT_SECRET: Joi.string().required(),
-        JWT_EXPIRATION: Joi.string().required(),
+        JWT_EXPIRATION: Joi.number().required(),
       }),
     }),
     DatabaseModule,
