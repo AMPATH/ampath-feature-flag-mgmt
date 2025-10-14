@@ -4,7 +4,7 @@ import { RulesService } from './rules.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Rules } from './entity/rules.entity';
 import { FeatureFlagService } from '../feature-flag/feature-flag.service';
-import { FeatureFlag } from '../feature-flag/entity/create-feature-flag.entity';
+import { FeatureFlag } from '../feature-flag/entity/feature-flag.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Rules, FeatureFlag])],

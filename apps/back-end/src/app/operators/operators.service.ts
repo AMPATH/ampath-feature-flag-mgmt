@@ -1,9 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Operator } from './entity/operators.entity';
 import { Repository } from 'typeorm';
 import { CreateOperatorDto } from './dto/create-operator.dto';
 import { UpdateOperatorDto } from './dto/update-operator.dto';
+import { AmrsUser } from '../auth/dto/amrs-auth.dto';
+import {
+  CreateAuditDto,
+  UpdateAuditDto,
+  VoidAuditDto,
+  VoidEntityDto,
+} from '../common/dto';
 
 @Injectable()
 export class OperatorsService {
@@ -11,10 +23,20 @@ export class OperatorsService {
     @InjectRepository(Operator) private operatorRepository: Repository<Operator>
   ) {}
 
-  create(createOperatorDto: CreateOperatorDto): Promise<Operator> {
+  create(
+    createOperatorDto: CreateOperatorDto,
+    user: AmrsUser
+  ): Promise<Operator> {
     try {
-      const operator = this.operatorRepository.create(createOperatorDto);
-      return this.operatorRepository.save(operator);
+      const createOperatorAuditInfo: CreateAuditDto = {
+        voided: false,
+        createdBy: user.username,
+      };
+      const operatorEntity = this.operatorRepository.create({
+        ...createOperatorDto,
+        ...createOperatorAuditInfo,
+      });
+      return this.operatorRepository.save(operatorEntity);
     } catch {
       throw new HttpException(
         'Error creating operator',
@@ -25,7 +47,9 @@ export class OperatorsService {
 
   findAll(): Promise<Operator[]> {
     try {
-      return this.operatorRepository.find();
+      return this.operatorRepository.findBy({
+        voided: false,
+      });
     } catch {
       throw new HttpException(
         'Error fetching operators',
@@ -47,17 +71,25 @@ export class OperatorsService {
 
   async update(
     id: number,
-    updateOperatorDto: UpdateOperatorDto
+    updateOperatorDto: UpdateOperatorDto,
+    user: AmrsUser
   ): Promise<Operator> {
+    const operator = await this.operatorRepository.findOneBy({
+      id: id,
+    });
+    if (!operator) {
+      throw new NotFoundException();
+    }
     try {
-      const existingOperator = await this.operatorRepository.preload({
-        id,
+      const updateAuditInfo: UpdateAuditDto = {
+        updatedBy: user.username,
+      };
+      const entity = this.operatorRepository.create({
+        ...operator,
         ...updateOperatorDto,
+        ...updateAuditInfo,
       });
-      if (!existingOperator) {
-        throw new Error(`Operator with id ${id} not found`);
-      }
-      return this.operatorRepository.save(existingOperator);
+      return this.operatorRepository.save(entity);
     } catch {
       throw new HttpException(
         `Error updating operator`,
@@ -66,11 +98,34 @@ export class OperatorsService {
     }
   }
 
-  async remove(id: number): Promise<string> {
-    const result = await this.operatorRepository.delete(id);
-    if (result.affected === 0) {
-      throw new Error(`Operator with id ${id} not found`);
+  async void(
+    id: number,
+    voidAttributeDto: VoidEntityDto,
+    user: AmrsUser
+  ): Promise<Operator> {
+    const operator = await this.operatorRepository.findOneBy({
+      id: id,
+    });
+    if (!operator) {
+      throw new NotFoundException();
     }
-    return `Operator with id ${id} has been deleted`;
+    try {
+      const voidAuditInfo: VoidAuditDto = {
+        voided: true,
+        voidedBy: user.username,
+        voidedDate: new Date(),
+        voidedReason: voidAttributeDto.voidedReason,
+      };
+      const entity = this.operatorRepository.create({
+        ...operator,
+        ...voidAuditInfo,
+      });
+      return this.operatorRepository.save(entity);
+    } catch {
+      throw new HttpException(
+        'Error deleting attribute',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

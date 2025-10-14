@@ -1,9 +1,21 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateFeatureFlagDto } from './dto/create-feature-flag.dto';
-import { FeatureFlag } from './entity/create-feature-flag.entity';
+import { FeatureFlag } from './entity/feature-flag.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UpdateFeatureFlagDto } from './dto/update-feature-flag.dto';
+import { AmrsUser } from '../auth/dto/amrs-auth.dto';
+import {
+  CreateAuditDto,
+  UpdateAuditDto,
+  VoidAuditDto,
+  VoidEntityDto,
+} from '../common/dto';
 
 @Injectable()
 export class FeatureFlagService {
@@ -12,11 +24,30 @@ export class FeatureFlagService {
     private featureflagRepository: Repository<FeatureFlag>
   ) {}
 
-  create(createfeatureflagDto: CreateFeatureFlagDto): Promise<FeatureFlag> {
+  async create(
+    createfeatureflagDto: CreateFeatureFlagDto,
+    user: AmrsUser
+  ): Promise<FeatureFlag> {
+    const ff = await this.featureflagRepository.findOneBy({
+      name: createfeatureflagDto.name,
+    });
+    if (ff) {
+      throw new HttpException(
+        'Feature Flag with the name already exists!',
+        HttpStatus.BAD_REQUEST
+      );
+    }
     try {
-      const featureflag =
+      const featureflagEntity =
         this.featureflagRepository.create(createfeatureflagDto);
-      return this.featureflagRepository.save(featureflag);
+      const createFeatureFlagAuditInfo: CreateAuditDto = {
+        voided: false,
+        createdBy: user.username,
+      };
+      return this.featureflagRepository.save({
+        ...featureflagEntity,
+        ...createFeatureFlagAuditInfo,
+      });
     } catch {
       throw new HttpException(
         'Error creating feature flag',
@@ -27,7 +58,9 @@ export class FeatureFlagService {
 
   findAll(): Promise<FeatureFlag[]> {
     try {
-      return this.featureflagRepository.find();
+      return this.featureflagRepository.findBy({
+        voided: false,
+      });
     } catch {
       throw new HttpException(
         'Error fetching feature flags',
@@ -38,9 +71,12 @@ export class FeatureFlagService {
 
   async getByName(name: string): Promise<FeatureFlag> {
     try {
-      const featureFlag = await this.featureflagRepository.findOneBy({ name });
+      const featureFlag = await this.featureflagRepository.findOneBy({
+        name: name,
+        voided: false,
+      });
       if (!featureFlag) {
-        throw new HttpException('Feature flag not found', HttpStatus.NOT_FOUND);
+        throw new NotFoundException();
       }
       return featureFlag;
     } catch (error) {
@@ -67,16 +103,25 @@ export class FeatureFlagService {
 
   async update(
     id: number,
-    updatefeatureflagDto: UpdateFeatureFlagDto
+    updatefeatureflagDto: UpdateFeatureFlagDto,
+    user: AmrsUser
   ): Promise<FeatureFlag> {
+    const ff = await this.featureflagRepository.findOneBy({
+      id: id,
+    });
+    if (!ff) {
+      throw new NotFoundException();
+    }
     try {
-      const feature = await this.featureflagRepository.preload({
-        id,
+      const featureFlagUpdateAuditInfo: UpdateAuditDto = {
+        updatedBy: user.username,
+      };
+
+      const feature = this.featureflagRepository.create({
+        ...ff,
         ...updatefeatureflagDto,
+        ...featureFlagUpdateAuditInfo,
       });
-      if (!feature) {
-        throw new Error(`FeatureFlag with id ${id} not found`);
-      }
       return this.featureflagRepository.save(feature);
     } catch {
       throw new HttpException(
@@ -86,11 +131,34 @@ export class FeatureFlagService {
     }
   }
 
-  async remove(id: number): Promise<string> {
-    const result = await this.featureflagRepository.delete(id);
-    if (result.affected === 0) {
-      throw new Error(`FeatureFlag with id ${id} not found`);
+  async void(
+    id: number,
+    voidFeatureFlagDto: VoidEntityDto,
+    user: AmrsUser
+  ): Promise<FeatureFlag> {
+    const featureFlag = await this.featureflagRepository.findOneBy({
+      id: id,
+    });
+    if (!featureFlag) {
+      throw new NotFoundException();
     }
-    return `FeatureFlag with id ${id} has been deleted`;
+    try {
+      const voidAuditInfo: VoidAuditDto = {
+        voided: true,
+        voidedBy: user.username,
+        voidedDate: new Date(),
+        voidedReason: voidFeatureFlagDto.voidedReason,
+      };
+      const entity = this.featureflagRepository.create({
+        ...featureFlag,
+        ...voidAuditInfo,
+      });
+      return this.featureflagRepository.save(entity);
+    } catch {
+      throw new HttpException(
+        'Error voiding feature flag',
+        HttpStatus.INTERNAL_SERVER_ERROR
+      );
+    }
   }
 }

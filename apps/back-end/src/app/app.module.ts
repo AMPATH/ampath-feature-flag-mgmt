@@ -8,9 +8,13 @@ import { FeatureFlagModule } from './feature-flag/feature-flag.module';
 import { RulesModule } from './rules/rules.module';
 import { OperatorsModule } from './operators/operators.module';
 import { AttributesModule } from './attributes/attributes.module';
+import { AuthModule } from './auth/auth.module';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
   imports: [
+    HttpModule,
+    AuthModule,
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: Joi.object({
@@ -20,6 +24,8 @@ import { AttributesModule } from './attributes/attributes.module';
         DATABASE_PASSWORD: Joi.string().required(),
         DATABASE_NAME: Joi.string().required(),
         SYNCHRONIZE_DATABASE: Joi.boolean().required(),
+        JWT_SECRET: Joi.string().required(),
+        JWT_EXPIRATION: Joi.string().required(),
       }),
     }),
     DatabaseModule,

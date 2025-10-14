@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { FeatureFlag } from '../../feature-flag/entity/create-feature-flag.entity';
-import { Attribute } from '../../attributes/entity/create-attribute.entity';
+import { FeatureFlag } from '../../feature-flag/entity/feature-flag.entity';
+import { Attribute } from '../../attributes/entity/attribute.entity';
 import { Operator } from '../../operators/entity/operators.entity';
 import { Rules } from '../../rules/entity/rules.entity';
 

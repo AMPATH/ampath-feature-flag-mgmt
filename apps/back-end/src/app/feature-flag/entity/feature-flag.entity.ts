@@ -26,26 +26,29 @@ export class FeatureFlag {
   @Column({ default: true })
   status: boolean;
 
-  @Column({ nullable: false })
+  @Column({ nullable: true })
   createdBy: string;
 
-  @CreateDateColumn({ nullable: false })
-  createdAt: Date;
+  @CreateDateColumn({ nullable: true })
+  createdDate: Date;
+
+  @UpdateDateColumn()
+  updatedDate: Date;
 
   @Column({ nullable: true })
   updatedBy: string;
 
-  @UpdateDateColumn({ nullable: true })
-  updatedAt: Date;
+  @Column({ nullable: true })
+  voided: boolean;
 
-  @Column({ default: false })
-  retired: boolean;
+  @Column({ nullable: true, type: 'timestamp' })
+  voidedDate: Date;
 
   @Column({ nullable: true })
-  retiredBy: string;
+  voidedBy: string;
 
   @Column({ nullable: true })
-  retiredDate: Date;
+  voidedReason: string;
 
   @OneToMany(() => Rules, (rules) => rules.featureFlag, { cascade: true })
   rules: Rules[];

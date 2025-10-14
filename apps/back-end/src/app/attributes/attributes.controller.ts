@@ -4,20 +4,24 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
+  Request,
 } from '@nestjs/common';
 import { AttributesService } from './attributes.service';
 import { CreateAttributeDto } from './dto/create-attribute.dto';
 import { UpdateAttributeDto } from './dto/update-attribute.dto';
+import { AmrsUser } from '../auth/dto/amrs-auth.dto';
+import { VoidEntityDto } from '../common/dto';
 
 @Controller('attributes')
 export class AttributesController {
   constructor(private attributesService: AttributesService) {}
 
   @Post()
-  create(@Body() attributesDto: CreateAttributeDto) {
-    return this.attributesService.create(attributesDto);
+  create(@Body() attributesDto: CreateAttributeDto, @Request() req) {
+    const user: AmrsUser = req.user;
+    return this.attributesService.create(attributesDto, user);
   }
 
   @Get()
@@ -30,13 +34,23 @@ export class AttributesController {
     return this.attributesService.findOne(id);
   }
 
-  @Put(':id')
-  update(@Param('id') id: number, @Body() attributeDto: UpdateAttributeDto) {
-    return this.attributesService.update(id, attributeDto);
+  @Patch(':id')
+  update(
+    @Param('id') id: number,
+    @Body() attributeDto: UpdateAttributeDto,
+    @Request() req
+  ) {
+    const user: AmrsUser = req.user;
+    return this.attributesService.update(id, attributeDto, user);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: number) {
-    return this.attributesService.remove(id);
+  delete(
+    @Param('id') id: number,
+    @Request() req,
+    @Body() voidAttributeDto: VoidEntityDto
+  ) {
+    const user: AmrsUser = req.user;
+    return this.attributesService.void(id, voidAttributeDto, user);
   }
 }

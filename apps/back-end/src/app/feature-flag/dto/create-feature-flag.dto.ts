@@ -1,10 +1,4 @@
-import {
-  IsString,
-  IsBoolean,
-  IsNotEmpty,
-  IsDate,
-  IsOptional,
-} from 'class-validator';
+import { IsString, IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class CreateFeatureFlagDto {
   @IsString()
@@ -15,13 +9,4 @@ export class CreateFeatureFlagDto {
   description: string;
   @IsBoolean()
   status: boolean;
-  @IsString()
-  @IsNotEmpty()
-  createdBy: string;
-  @IsString()
-  updatedBy: string;
-  @IsBoolean()
-  retired: boolean;
-  @IsString()
-  retiredBy: string;
 }
