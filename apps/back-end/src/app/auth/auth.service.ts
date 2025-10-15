@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { AmrsAuthService } from './amrs-auth.service';
 import { AmrsAuthResponse, JwtAmrsUser } from './dto/amrs-auth.dto';
@@ -20,7 +24,7 @@ export class AuthService {
     });
     if (!amrsUser) throw new NotFoundException('Wrong username or password!');
     if (!amrsUser.authenticated) {
-      throw new NotFoundException('Wrong username or password!');
+      throw new UnauthorizedException();
     }
     return amrsUser;
   }
