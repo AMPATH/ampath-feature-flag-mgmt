@@ -5,6 +5,7 @@ import { FeatureFlagsComponent } from '../feature_flags/feature_flags.component'
 import { OperatorsComponent } from '../operators/operators.component';
 import { AttributesComponent } from '../attributes/attributes.component';
 import { RulesComponent } from '../rules/rules.component';
+import { AuthGuard } from '../guards/auth_guard';
 
 export const appRoutes: Route[] = [
     {
@@ -14,6 +15,7 @@ export const appRoutes: Route[] = [
     {
         path: 'home',
         component: NavBarComponent,
+        canActivate: [AuthGuard],
         children: [
             {
                 path: 'feature-flags',

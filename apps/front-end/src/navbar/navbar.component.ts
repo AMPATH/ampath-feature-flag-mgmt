@@ -1,11 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { MatMenuModule } from "@angular/material/menu";
+import { SessionUtils } from "../services/utils/sessions.utils";
 
 @Component({
     imports: [MatSidenavModule,
@@ -19,7 +20,11 @@ import { MatMenuModule } from "@angular/material/menu";
 })
 
 export class NavBarComponent {
+    private router = inject(Router);
+    private sessionUtils = inject(SessionUtils);
+
     logout() {
-        console.log("logged out");
+        this.sessionUtils.clearSession();
+        this.router.navigate(['']);
     }
 }

@@ -26,9 +26,8 @@ export class RulesService extends BaseService {
     }
 
     public update(id: number, featureFlagId: number, attributeId: number, operatorId: number, value: string) {
-        const url = this.getEndpoint();
-        return this.http.put(url, {
-            id,
+        const url = this.getEndpoint() + "/" + id;
+        return this.http.patch(url, {
             featureFlagId,
             attributeId,
             operatorId,

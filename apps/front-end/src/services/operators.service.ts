@@ -5,7 +5,6 @@ import { OperatorTypes } from "../operators/operators.types";
 @Injectable({ providedIn: 'root' })
 export class OperatorsService extends BaseService {
     private endPoint = "/operators";
-    private session = this.sessionUtils.getSession();
 
     private getEndpoint(endPoint: string = this.endPoint) {
         return this.getUrl("FEATURE_FLAG") + endPoint;
@@ -20,15 +19,13 @@ export class OperatorsService extends BaseService {
         const url = this.getEndpoint();
         return this.http.post(url, {
             name,
-            description,
-            createdBy: this.session.username
+            description
         });
     }
 
     public update(id: number, name: string, description: string) {
         const url = this.getEndpoint() + "/" + id;
-        return this.http.put(url, {
-            id,
+        return this.http.patch(url, {
             name,
             description
         });

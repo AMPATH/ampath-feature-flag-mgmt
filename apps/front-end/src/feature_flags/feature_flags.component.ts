@@ -41,11 +41,7 @@ export class FeatureFlagsComponent implements OnInit {
         {
             name: "Status",
             property: "status"
-        },
-        {
-            name: "Retired",
-            property: "retired"
-        },
+        }
     ];
 
     dataSource = new MatTableDataSource<object>();

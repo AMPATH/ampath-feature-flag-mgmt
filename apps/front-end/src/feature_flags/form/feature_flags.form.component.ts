@@ -88,7 +88,7 @@ export class FeatureFlagFormComponent implements OnInit {
 
     update() {
         this.busy = true;
-        this.featureFlagsService.update(this.data.id, this.description, this.status, this.retired)
+        this.featureFlagsService.update(this.data.id, this.name, this.description, this.status)
             .pipe(
                 tap((res) => {
                     this.snackBar.open(`Feature flag updated successfully`, "success");

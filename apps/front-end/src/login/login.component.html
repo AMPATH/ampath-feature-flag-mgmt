@@ -1,36 +1,26 @@
 <div class="d-flex justify-content-center">
-    <div class="">
-        <div class="card my-5">
-            <img class="col-md-7 d-block mx-auto my-3" src="ampath-logo.png" alt="Ampath Logo">
-            <div class="card-body">
-                <h6 class="card-title m-3 text-center">Feature Flag Management</h6>
-                <form (ngSubmit)="onSubmitLogin($event)">
-                    <div class="row my-3">
-                        <div class="col">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" name="username" [(ngModel)]="username"
-                                class="form-control form-control-sm" placeholder="Enter username">
-                        </div>
-                    </div>
-                    <div class="row my-3">
-                        <div class="col">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" name="password" [(ngModel)]="password"
-                                class="form-control form-control-sm" placeholder="Enter password" ngModel>
-                        </div>
-                    </div>
-                    <div class="row my-3">
-                        <div class="col">
-                            <button type="submit" class="btn btn-sm btn-primary d-block mx-auto col-md-8">Login</button>
-                        </div>
-                    </div>
-                    <div class="row my-3" *ngIf="loginError !== ''">
-                        <div class="col-md-12">
-                            <p class="alert alert-danger text-center">{{loginError}}</p>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+    <mat-card class="login-card" appearance="outlined">
+        <mat-card-header>
+            <img mat-card-image src="ampath-logo.png" alt="Ampath Logo">
+            <h5>
+                Feature Flag Management
+            </h5>
+        </mat-card-header>
+        <mat-card-content>
+            <form class="app-form" (ngSubmit)="onSubmitLogin($event)">
+                <mat-form-field appearance="outline">
+                    <mat-label>Username</mat-label>
+                    <input matInput [(ngModel)]="username" name="username" required />
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                    <mat-label>Password</mat-label>
+                    <input matInput [(ngModel)]="password" name="password" type="password" required />
+                </mat-form-field>
+                <div class="form-btn">
+                    <button type="submit" matButton="filled" *ngIf="!busy">LOGIN</button>
+                    <ng-container *ngIf="busy"> <mat-spinner diameter="50"></mat-spinner></ng-container>
+                </div>
+            </form>
+        </mat-card-content>
+    </mat-card>
 </div>

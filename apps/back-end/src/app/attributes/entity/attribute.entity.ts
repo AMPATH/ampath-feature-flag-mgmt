@@ -33,7 +33,7 @@ export class Attribute {
   @UpdateDateColumn()
   updatedDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   updatedBy: string;
 
   @Column({ nullable: true })

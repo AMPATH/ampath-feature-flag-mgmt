@@ -12,7 +12,7 @@
             <mat-error *ngIf="pageForm.value.description">Description is required</mat-error>
         </mat-form-field>
         <p><mat-slide-toggle [(ngModel)]="status" (change)="onStatusChange($event)" name="status" formControlName="status">Status</mat-slide-toggle></p>
-         <p *ngIf="isUpdate"><mat-slide-toggle [(ngModel)]="retired" (change)="onRetiredChange($event)" name="retired" formControlName="retired">Retired</mat-slide-toggle></p>
+         <!-- <p *ngIf="isUpdate"><mat-slide-toggle [(ngModel)]="retired" (change)="onRetiredChange($event)" name="retired" formControlName="retired">Retired</mat-slide-toggle></p> -->
         <div class="form-btn">        
             <button type="submit" [disabled]="!pageForm.valid" matButton="filled">{{ btnTxt }}</button>
         </div>

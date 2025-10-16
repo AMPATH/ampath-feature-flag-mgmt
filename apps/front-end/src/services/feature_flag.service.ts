@@ -5,7 +5,6 @@ import { FeatureFlagTypes } from "../feature_flags/feature_flags.types";
 @Injectable({ providedIn: 'root' })
 export class FeatureFlagsService extends BaseService {
     private endPoint = "/feature-flags";
-    private session = this.sessionUtils.getSession();
 
     private getEndpoint(endPoint: string = this.endPoint) {
         return this.getUrl("FEATURE_FLAG") + endPoint;
@@ -21,22 +20,16 @@ export class FeatureFlagsService extends BaseService {
         return this.http.post(url, {
             name,
             description,
-            status,
-            createdBy: this.session.username,
-            updatedBy: "",
-            retiredBy: this.session.username,
-            retired: false
+            status
         });
     }
 
-    public update(id: number, description: string, status: boolean, retired: boolean) {
+    public update(id: number, name: string, description: string, status: boolean) {
         const url = this.getEndpoint() + "/" + id;
-        return this.http.put(url, {
-            id,
+        return this.http.patch(url, {
+            name,
             description,
-            status,
-            retired,
-            updatedBy: this.session.username
+            status
         });
     }
 

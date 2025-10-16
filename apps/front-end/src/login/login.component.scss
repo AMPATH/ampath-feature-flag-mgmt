@@ -1,0 +1,17 @@
+.login-card {
+    margin: 15px;
+}
+
+mat-card-header {
+    display: flex;
+    flex-direction: column;
+}
+
+mat-card-header img {
+    margin: 25px;
+}
+
+mat-card-header h5 {
+    margin: 12px;
+    text-align: center;
+}
