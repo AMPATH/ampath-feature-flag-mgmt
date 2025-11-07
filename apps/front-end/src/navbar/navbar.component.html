@@ -2,9 +2,9 @@
   <mat-sidenav #sidenav mode="side" opened>
     <mat-toolbar color="primary">Feature Flags</mat-toolbar>
     <mat-nav-list>
-      <a mat-list-item href="/home/feature-flags">Feature Flags</a>
-      <a mat-list-item href="/home/attributes">Attributes</a>
-      <a mat-list-item href="/home/operators">Operators</a>
+      <a mat-list-item [routerLink]="['feature-flags']">Feature Flags</a>
+      <a mat-list-item [routerLink]="['attributes']">Attributes</a>
+      <a mat-list-item [routerLink]="['operators']">Operators</a>
     </mat-nav-list>
   </mat-sidenav>
 

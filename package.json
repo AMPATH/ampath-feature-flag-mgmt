@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "start:be": "npx nx serve back-end --no-cloud",
-    "start:fe": "npx nx serve front-end"
+    "start:fe": "npx nx serve front-end",
+    "build:fe": "npx nx build front-end --base-href /feature-flag-management/",
+    "build:be": "npx nx build back-end"
   },
   "private": true,
   "dependencies": {
