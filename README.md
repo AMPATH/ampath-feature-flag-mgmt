@@ -7,7 +7,7 @@ Feature Flag management project consists of 2 apps
 2. back-end
    - Uses NestJs v21
    - TypeORM v0.3
-   - MySQL
+   - MariaDB
 
 ## Requirements
 
@@ -74,4 +74,48 @@ To see all available targets to run for a project, run:
 
 ```sh
 npx nx show project front-end
+```
+
+## Docker
+
+Both the front-end and the back-end can be dockerized and deployed as separate containers
+
+### Front-end
+
+To build the docker image for the front-end run the following
+
+```sh
+docker build --platform linux/amd64 -f apps/front-end/Dockerfile -t ampathke/feature-flag-service-ui:v${VERSION} .
+```
+
+Then push the image
+
+```sh
+docker push ampathke/feature-flag-service-ui:v1.0.0
+```
+
+To run the container
+
+```sh
+docker run -d --name feature-flag-management-ui -p ${HOST_PORT}:80 ampathke/feature-flag-service-ui:v${VERSION}
+```
+
+### Back-end
+
+To build the docker image for the back-end run the following
+
+```sh
+docker build --platform linux/amd64 -f apps/back-end/Dockerfile -t ampathke/feature-flag-service:v${VERSION} .
+```
+
+Then push the image
+
+```sh
+docker push ampathke/feature-flag-service:v${VERSION}
+```
+
+To run the container
+
+```sh
+docker run --name feature-flag-service -d -p ${HOST_PORT}:4000  --env-file .env ampathke/feature-flag-services:v${VERSION}
 ```
