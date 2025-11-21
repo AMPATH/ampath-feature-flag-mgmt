@@ -16,19 +16,21 @@ export class AttributesService extends BaseService {
     return this.http.get<AttributeTypes[]>(url);
   }
 
-  public create(name: string, description: string) {
+  public create(name: string, description: string, type: string) {
     const url = this.getEndpoint();
     return this.http.post(url, {
       name,
       description,
+      type,
     });
   }
 
-  public update(id: number, name: string, description: string) {
+  public update(id: number, name: string, description: string, type: string) {
     const url = this.getEndpoint() + '/' + id;
     return this.http.patch(url, {
       name,
       description,
+      type,
     });
   }
 

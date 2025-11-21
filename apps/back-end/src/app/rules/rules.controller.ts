@@ -66,6 +66,11 @@ export class RulesController {
     return this.rulesService.void(id, voidEntityDto, user);
   }
 
+  @Get('feature-flag/:featureFlagId')
+  getFeatureFlagRules(@Param('featureFlagId') featureFlagId: number) {
+    return this.rulesService.findRulesByFeatureFlagId(featureFlagId);
+  }
+
   @Public()
   @Post('feature-flag')
   getFlag(@Body() getFeatureFlagDto: GetFeatureFlagDto) {

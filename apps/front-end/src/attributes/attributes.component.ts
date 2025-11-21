@@ -33,6 +33,10 @@ export class AttributesComponent implements OnInit {
       name: 'Description',
       property: 'description',
     },
+    {
+      name: 'Type',
+      property: 'type',
+    },
   ];
 
   dataSource = new MatTableDataSource<object>();

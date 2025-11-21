@@ -10,6 +10,7 @@ import { OperatorsModule } from './operators/operators.module';
 import { AttributesModule } from './attributes/attributes.module';
 import { AuthModule } from './auth/auth.module';
 import { HttpModule } from '@nestjs/axios';
+import { LocationModule } from './locations/location.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { HttpModule } from '@nestjs/axios';
     RulesModule,
     AttributesModule,
     OperatorsModule,
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

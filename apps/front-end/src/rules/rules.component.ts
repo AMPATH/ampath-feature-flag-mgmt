@@ -116,7 +116,7 @@ export class RulesComponent implements OnInit {
   fetchRules() {
     this.busy = true;
     this.rulesService
-      .fetch()
+      .fetchByFeatureFlagId(this.featureFlagId)
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap((res) => {

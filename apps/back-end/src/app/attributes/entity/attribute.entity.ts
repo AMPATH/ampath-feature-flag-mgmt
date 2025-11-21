@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Rules } from '../../rules/entity/rules.entity';
+import { AttributeType } from '../../common/dto';
 
 @Entity('attributes')
 export class Attribute {
@@ -21,6 +22,13 @@ export class Attribute {
 
   @Column({ nullable: true })
   description: string;
+
+  @Column({
+    type: 'enum',
+    enum: AttributeType,
+    default: AttributeType.SYSTEM,
+  })
+  type: AttributeType;
 
   @CreateDateColumn({ nullable: false })
   dateCreated: Date;

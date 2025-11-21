@@ -52,6 +52,14 @@ export class RulesService {
   findOne(id: number): Promise<Rules> {
     return this.rulesRepository.findOneBy({ id });
   }
+  findRulesByFeatureFlagId(featureFlagId: number) {
+    return this.rulesRepository.findBy({
+      featureFlag: {
+        id: featureFlagId,
+      },
+      voided: false,
+    });
+  }
 
   async update(
     id: number,
@@ -135,20 +143,45 @@ export class RulesService {
 
   async getFeatureFlag(getFeatureFlagDto: GetFeatureFlagDto) {
     const evaluatedRes = {};
-    Object.keys(getFeatureFlagDto.context).forEach((key) => {
-      evaluatedRes[key] = false;
-    });
     const featureFlag = await this.featureFlagService.getByName(
       getFeatureFlagDto.featureFlagName
     );
+
+    /*
+     if feature flag is off return false
+    */
+
     if (featureFlag.status === false) {
+      Object.keys(getFeatureFlagDto.context).forEach((key) => {
+        evaluatedRes[key] = false;
+      });
       return evaluatedRes;
     }
     const rules = await this.rulesRepository.findBy({
       featureFlag: { name: getFeatureFlagDto.featureFlagName, voided: false },
     });
+    /* 
+    if feature flag is on an there are no rules set then return
+    true
+    */
+    if (featureFlag.status === true && (rules.length === 0 || !rules)) {
+      Object.keys(getFeatureFlagDto.context).forEach((key) => {
+        evaluatedRes[key] = true;
+      });
 
-    return this.evaluateRule(getFeatureFlagDto, rules, evaluatedRes);
+      return evaluatedRes;
+    }
+
+    if (featureFlag.status === true && rules.length > 0) {
+      // set values to false and evaluate individually
+      Object.keys(getFeatureFlagDto.context).forEach((key) => {
+        evaluatedRes[key] = true;
+      });
+
+      return this.evaluateRule(getFeatureFlagDto, rules, evaluatedRes);
+    }
+
+    return evaluatedRes;
   }
 
   private evaluateRule(
