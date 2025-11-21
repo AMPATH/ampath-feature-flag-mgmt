@@ -4,6 +4,7 @@
         <mat-form-field appearance="outline">
             <mat-label>Attributes</mat-label>
             <mat-select name="attributeId" formControlName="attributeId" required>
+                 <mat-option value="">Select Attribute</mat-option>
                 @for (attribute of attributes; track attribute.id) {
                 <mat-option [value]="attribute.id">{{attribute.name}} ({{attribute.description}})</mat-option>
                 }
@@ -13,17 +14,32 @@
          <mat-form-field appearance="outline">
             <mat-label>Operator</mat-label>
             <mat-select name="operatorId" formControlName="operatorId" required>
+                 <mat-option value="">Select Operator</mat-option>
                 @for (op of operators; track op.id) {
                 <mat-option [value]="op.id">{{op.name}} ({{op.description}})</mat-option>
                 }
             </mat-select>
         </mat-form-field>
 
-         <mat-form-field appearance="outline">
+        @if (selectedAttribute?.type === attributeType.LOCATION) {
+        <mat-form-field class="example-full-width">
+            <mat-label>AMRS Locations</mat-label>
+                    <mat-select formControlName="value" name="value" multiple>
+                         <mat-option value="">Select Location</mat-option>
+                        @for (l of amrsLocationOptions; track l.value) {
+                            <mat-option [value]="l.value">{{l.label}}</mat-option>
+                     }
+                  </mat-select>
+        </mat-form-field>
+        }@else {
+          <mat-form-field appearance="outline">
             <mat-label>Value</mat-label>
             <input matInput name="value" formControlName="value" required />
             <mat-error *ngIf="pageForm.value.value">value is required</mat-error>
-        </mat-form-field>
+          </mat-form-field>
+        }
+
+         
 
         <div class="form-btn">
             <button type="submit" [disabled]="!pageForm.valid" matButton="filled">{{ btnTxt }}</button>

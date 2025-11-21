@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { AttributeType } from '../../common/dto';
 
 export class CreateAttributeDto {
   @IsString()
@@ -6,4 +7,6 @@ export class CreateAttributeDto {
   name: string;
   @IsString()
   description?: string;
+  @IsEnum(AttributeType)
+  type: AttributeType;
 }

@@ -15,6 +15,10 @@ export class RulesService extends BaseService {
     const url = this.getEndpoint();
     return this.http.get<RuleTypes[]>(url);
   }
+  public fetchByFeatureFlagId(featureFlagId: number) {
+    const url = `${this.getEndpoint()}/feature-flag/${featureFlagId}`;
+    return this.http.get<RuleTypes[]>(url);
+  }
 
   public create(createRuleDto: CreateRuleDto) {
     const url = this.getEndpoint();

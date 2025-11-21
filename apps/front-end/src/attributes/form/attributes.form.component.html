@@ -6,6 +6,15 @@
             <input matInput [(ngModel)]="name" name="name" formControlName="name" />
             <mat-error *ngIf="pageForm.value.name">Name is required</mat-error>
         </mat-form-field>
+         <mat-form-field appearance="outline">
+           <mat-label>Type</mat-label>
+            <mat-select [(ngModel)]="type" name="type" formControlName="type">
+                <mat-option value="">Select Type</mat-option>
+                @for (t of attributeTypeOptions; track $index) {
+                     <mat-option [value]="t.value">{{t.label}}</mat-option>
+                }
+            </mat-select>
+         </mat-form-field>
         <mat-form-field appearance="outline">
             <mat-label>Description</mat-label>
             <input matInput [(ngModel)]="description" name="description" formControlName="description" />

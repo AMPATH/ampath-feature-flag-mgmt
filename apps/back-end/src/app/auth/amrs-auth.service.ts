@@ -3,6 +3,7 @@ import { AmrsAuthResponse, AmrsSignInDto } from './dto/amrs-auth.dto';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
+import { base64Encode } from '../common/utils/base-64-encode';
 
 @Injectable()
 export class AmrsAuthService {
@@ -12,7 +13,7 @@ export class AmrsAuthService {
 
   public async authenticate(signInDto: AmrsSignInDto) {
     const authUrl = `${this.baseUrl}/session`;
-    const authorizationString = this.base64Encode(signInDto);
+    const authorizationString = base64Encode(signInDto);
     const { data } = await firstValueFrom(
       this.httpService
         .get<AmrsAuthResponse>(authUrl, {
@@ -27,10 +28,5 @@ export class AmrsAuthService {
         )
     );
     return data;
-  }
-  private base64Encode(signInDto: AmrsSignInDto) {
-    const textToEncode = `${signInDto.username}:${signInDto.password}`;
-    const encodedString = btoa(textToEncode);
-    return encodedString;
   }
 }

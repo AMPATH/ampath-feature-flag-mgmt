@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   inject,
   OnInit,
+  DestroyRef,
 } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -23,7 +24,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { catchError, finalize, tap } from 'rxjs';
+import { catchError, finalize, map, tap } from 'rxjs';
 import { SnackBarUtil } from '../../shared/snackbar/snackbar.util';
 import { CommonModule } from '@angular/common';
 import { RulesService } from '../../services/rules.service';
@@ -31,6 +32,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { AttributeTypes } from '../../attributes/attributes.types';
 import { OperatorTypes } from '../../operators/operators.types';
 import { CreateRuleDto, UpdateRuleDto } from '../rules.types';
+import { LocationService } from '../../services/location.service';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { AttributeType, Location } from '../../shared/types/app.types';
 
 @Component({
   selector: 'app-rules-form',
@@ -48,6 +53,7 @@ import { CreateRuleDto, UpdateRuleDto } from '../rules.types';
     ReactiveFormsModule,
     MatSelectModule,
     MatProgressSpinnerModule,
+    MatAutocompleteModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -56,6 +62,8 @@ export class RulesFormComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<RulesFormComponent>);
   private rulesService = inject(RulesService);
   private snackBar = inject(SnackBarUtil);
+  private locationService = inject(LocationService);
+  private destroyRef = inject(DestroyRef);
 
   attributes: AttributeTypes[] = [];
   busy = false;
@@ -64,12 +72,20 @@ export class RulesFormComponent implements OnInit {
   operators: OperatorTypes[] = [];
   value = '';
   title = '';
+  amrsLocations: Location[] = [];
+  amrsLocationOptions: { value: string; label: string }[] = [];
+
+  filteredLocationOptions: { value: string; label: string }[] = [];
+  selectedAttribute: AttributeTypes | undefined;
+  attributeType = AttributeType;
 
   pageForm = new FormGroup({
     featureFlagId: new FormControl<number | null>(null, [Validators.required]),
     attributeId: new FormControl<number | null>(null, [Validators.required]),
     operatorId: new FormControl<number | null>(null, [Validators.required]),
-    value: new FormControl(this.value, [Validators.required]),
+    value: new FormControl<string[] | string | null>(null, [
+      Validators.required,
+    ]),
   });
 
   ngOnInit() {
@@ -78,15 +94,24 @@ export class RulesFormComponent implements OnInit {
     this.isUpdate = this.data.isUpdate;
     this.title = this.data.title;
     this.operators = this.data.operators;
+    this.setSelectedAttribute(this.data.attributeId);
     this.setDefaultFormValues();
+    this.getAmrsLocations();
+    this.listenToAttributeChanges();
   }
 
   setDefaultFormValues() {
+    let valueData = null;
+    if (this.selectedAttribute?.type === this.attributeType.LOCATION) {
+      valueData = this.data.value.split(',');
+    } else {
+      valueData = this.data.value;
+    }
     this.pageForm.patchValue({
       featureFlagId: Number(this.data.featureFlagId),
       attributeId: this.data.attributeId,
       operatorId: this.data.operatorId,
-      value: this.data.value,
+      value: valueData,
     });
   }
 
@@ -123,10 +148,16 @@ export class RulesFormComponent implements OnInit {
   generateCreatePayload(): CreateRuleDto {
     const { featureFlagId, attributeId, operatorId, value } =
       this.pageForm.value;
+    let ruleValue = null;
+    if (this.selectedAttribute?.type === this.attributeType.LOCATION) {
+      ruleValue = (value as unknown as string[]).join(',');
+    } else {
+      ruleValue = value;
+    }
     return {
       featureFlagId: featureFlagId ?? 0,
       operatorId: operatorId ?? 0,
-      value: value ?? 0,
+      value: (ruleValue as any) ?? 0,
       attributeId: attributeId ?? 0,
     };
   }
@@ -178,5 +209,55 @@ export class RulesFormComponent implements OnInit {
         })
       )
       .subscribe();
+  }
+
+  getAmrsLocations() {
+    this.busy = true;
+    this.locationService
+      .fetch()
+      .pipe(
+        tap((l) => {
+          this.amrsLocations = l.results;
+        }),
+        map((res) => {
+          return res.results.map((l) => {
+            return {
+              label: l.display,
+              value: l.display,
+            };
+          });
+        }),
+        tap((res) => {
+          this.amrsLocationOptions = res;
+        }),
+        finalize(() => {
+          this.busy = false;
+        })
+      )
+      .subscribe();
+  }
+  listenToAttributeChanges() {
+    this.pageForm
+      .get('attributeId')
+      ?.valueChanges.pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((attributeId) => {
+          this.resetValue();
+          if (attributeId) {
+            this.setSelectedAttribute(attributeId);
+          }
+        })
+      )
+      .subscribe();
+  }
+  setSelectedAttribute(attributeId: number) {
+    this.selectedAttribute = this.attributes.find((at) => {
+      return at.id === attributeId;
+    });
+  }
+  resetValue() {
+    this.pageForm.patchValue({
+      value: null,
+    });
   }
 }
